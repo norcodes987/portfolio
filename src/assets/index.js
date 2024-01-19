@@ -12,7 +12,7 @@ import nex10 from "./company/nex10.png";
 import mci from "./company/mci.png";
 import hpe from "./company/hpe.png";
 
-import carrent from "./carrent.png";
+import libraryapp from "./libraryapp.png";
 import jobit from "./jobit.png";
 import tripguide from "./tripguide.png";
 
@@ -29,7 +29,7 @@ export {
   nex10,
   mci,
   hpe,
-  carrent,
+  libraryapp,
   jobit,
   tripguide,
 };
