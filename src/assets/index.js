@@ -1,4 +1,4 @@
-import logoWhite from './logoWhite.svg'
+import logoWhite from "./logoWhite.svg";
 import backend from "./backend.png";
 import creator from "./creator.png";
 import mobile from "./mobile.png";
@@ -13,8 +13,8 @@ import mci from "./company/mci.png";
 import hpe from "./company/hpe.png";
 
 import libraryapp from "./libraryapp.png";
-import jobit from "./jobit.png";
-import tripguide from "./tripguide.png";
+import awsdev from "./awsdev.png";
+import awssa from "./awssa.png";
 
 export {
   logoWhite,
@@ -30,6 +30,6 @@ export {
   mci,
   hpe,
   libraryapp,
-  jobit,
-  tripguide,
+  awsdev,
+  awssa,
 };
