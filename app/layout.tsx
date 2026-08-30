@@ -15,12 +15,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Portfolio Dashboard",
   description: "Personal investment portfolio dashboard",
+  applicationName: "Portfolio",
+  appleWebApp: {
+    capable: true,
+    title: "Portfolio",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#0b1120",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
