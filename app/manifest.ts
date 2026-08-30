@@ -6,15 +6,15 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'Portfolio',
     description: 'Personal investment portfolio dashboard',
     start_url: '/',
+    scope: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#0f172a',
+    orientation: 'portrait',
+    background_color: '#0b1120',
+    theme_color: '#0b1120',
     icons: [
-      {
-        src: '/favicon.ico',
-        sizes: 'any',
-        type: 'image/x-icon',
-      },
+      { src: '/apple-icon', sizes: '180x180', type: 'image/png' },
+      { src: '/icon', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/icon', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],
   }
 }
