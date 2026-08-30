@@ -1,4 +1,4 @@
-import { aggregateBySector, computeBrokerWeights } from '../aggregate'
+import { aggregateBySector, computeBrokerWeights, summarizeHoldings } from '../aggregate'
 import type { Holding } from '../sheets/types'
 
 function holding(overrides: Partial<Holding>): Holding {
@@ -45,6 +45,28 @@ describe('aggregateBySector', () => {
     expect(result).toHaveLength(6)
     // marketValue is `10 - i`, so A..G = 10,9,8,7,6,5,4; top 5 kept, F+G bucketed.
     expect(result[5]).toEqual({ sector: 'Other', value: 5 + 4 }) // F(5) + G(4)
+  })
+})
+
+describe('summarizeHoldings', () => {
+  it('totals market value and P&L, and derives P&L % off cost basis', () => {
+    const holdings = [
+      holding({ marketValue: 110, unrealizedPnl: 10 }),
+      holding({ marketValue: 90, unrealizedPnl: -10 }),
+    ]
+    expect(summarizeHoldings(holdings)).toEqual({
+      marketValue: 200,
+      unrealizedPnl: 0,
+      unrealizedPnlPct: 0,
+    })
+  })
+
+  it('ignores rows with no market value', () => {
+    expect(summarizeHoldings([holding({ marketValue: null, unrealizedPnl: 5 })])).toEqual({
+      marketValue: 0,
+      unrealizedPnl: 0,
+      unrealizedPnlPct: 0,
+    })
   })
 })
 

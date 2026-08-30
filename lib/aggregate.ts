@@ -26,6 +26,31 @@ export function aggregateBySector(holdings: Holding[], maxSlices = 6): SectorSli
   return [...top, { sector: 'Other', value: otherValue }]
 }
 
+export interface HoldingsSummary {
+  marketValue: number
+  unrealizedPnl: number
+  /** P&L as a % of cost basis (marketValue - unrealizedPnl); 0 when nothing is held */
+  unrealizedPnlPct: number
+}
+
+export function summarizeHoldings(holdings: Holding[]): HoldingsSummary {
+  let marketValue = 0
+  let unrealizedPnl = 0
+
+  for (const holding of holdings) {
+    if (holding.marketValue === null) continue
+    marketValue += holding.marketValue
+    unrealizedPnl += holding.unrealizedPnl ?? 0
+  }
+
+  const costBasis = marketValue - unrealizedPnl
+  return {
+    marketValue,
+    unrealizedPnl,
+    unrealizedPnlPct: costBasis > 0 ? (unrealizedPnl / costBasis) * 100 : 0,
+  }
+}
+
 export interface BrokerWeight {
   broker: Holding['broker']
   pct: number
