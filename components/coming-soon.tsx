@@ -1,6 +1,6 @@
 export function ComingSoon({ title, description }: { title: string; description: string }) {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-2xl px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
       <h1 className="mb-5 text-lg font-semibold text-slate-900">{title}</h1>
       <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
         <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-400">

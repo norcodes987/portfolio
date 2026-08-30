@@ -17,6 +17,11 @@
   color-scheme: light;
 }
 
+html {
+  /* keeps the fixed bottom nav clear of the iOS home indicator / Safari bar */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 body {
   background: var(--color-canvas);
   color: #0f172a;

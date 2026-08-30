@@ -11,6 +11,8 @@ import {
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends RowData, TValue> {
     align?: 'left' | 'right'
+    /** hide this column on narrow (< sm) viewports */
+    mobileHidden?: boolean
   }
 }
 
@@ -36,9 +38,9 @@ export function DataTable<TData>({ columns, data, emptyMessage = 'No data' }: Da
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={`whitespace-nowrap px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 ${
+                  className={`whitespace-nowrap px-2 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 sm:px-3 ${
                     header.column.columnDef.meta?.align === 'right' ? 'text-right' : 'text-left'
-                  }`}
+                  } ${header.column.columnDef.meta?.mobileHidden ? 'hidden sm:table-cell' : ''}`}
                 >
                   {header.isPlaceholder
                     ? null
@@ -57,9 +59,9 @@ export function DataTable<TData>({ columns, data, emptyMessage = 'No data' }: Da
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className={`whitespace-nowrap px-3 py-3 tabular-nums text-slate-700 ${
+                  className={`whitespace-nowrap px-2 py-2.5 tabular-nums text-slate-700 sm:px-3 sm:py-3 ${
                     cell.column.columnDef.meta?.align === 'right' ? 'text-right' : 'text-left'
-                  }`}
+                  } ${cell.column.columnDef.meta?.mobileHidden ? 'hidden sm:table-cell' : ''}`}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
