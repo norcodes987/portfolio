@@ -7,7 +7,7 @@ function Tabs({ className, ...props }: ComponentProps<typeof TabsPrimitive.Root>
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
-      className={`flex flex-col gap-2 ${className ?? ''}`}
+      className={`flex flex-col gap-3 ${className ?? ''}`}
       {...props}
     />
   )
@@ -17,7 +17,7 @@ function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.L
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={`inline-flex h-10 items-center rounded-lg bg-gray-100 p-1 ${className ?? ''}`}
+      className={`inline-flex h-9 items-center gap-1 border-b border-slate-200 ${className ?? ''}`}
       {...props}
     />
   )
@@ -27,7 +27,7 @@ function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitiv
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
-      className={`inline-flex min-h-8 flex-1 items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors data-[state=active]:bg-white data-[state=active]:shadow ${className ?? ''}`}
+      className={`-mb-px inline-flex min-h-9 items-center border-b-2 border-transparent px-3 text-sm font-medium text-slate-500 transition-colors hover:text-slate-800 data-[state=active]:border-emerald-500 data-[state=active]:text-slate-900 ${className ?? ''}`}
       {...props}
     />
   )
@@ -35,7 +35,11 @@ function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitiv
 
 function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>) {
   return (
-    <TabsPrimitive.Content data-slot="tabs-content" className={`mt-3 ${className ?? ''}`} {...props} />
+    <TabsPrimitive.Content
+      data-slot="tabs-content"
+      className={`focus-visible:outline-none ${className ?? ''}`}
+      {...props}
+    />
   )
 }
 

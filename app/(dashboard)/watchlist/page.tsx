@@ -1,21 +1,27 @@
 import { Suspense } from 'react'
 import { connection } from 'next/server'
 import { getWatchlist } from '@/lib/sheets/fetch'
+import { Panel } from '@/components/panel'
 import { WatchlistTable } from '@/components/watchlist-table'
 
 export default function WatchlistPage() {
   return (
-    <main className="mx-auto max-w-2xl space-y-4 p-6">
-      <h1 className="text-xl font-semibold">Watchlist</h1>
-      <Suspense fallback={<p>Loading…</p>}>
+    <div className="mx-auto max-w-3xl px-4 py-5 sm:px-6 lg:px-8">
+      <h1 className="mb-1 text-lg font-semibold text-slate-900">Watchlist</h1>
+      <p className="mb-5 text-sm text-slate-400">Tickers you&apos;re tracking, held and not-yet-held.</p>
+      <Suspense fallback={<div className="h-64 animate-pulse rounded-xl border border-slate-200 bg-white" />}>
         <WatchlistContent />
       </Suspense>
-    </main>
+    </div>
   )
 }
 
 async function WatchlistContent() {
   await connection()
   const items = await getWatchlist()
-  return <WatchlistTable items={items} />
+  return (
+    <Panel bodyClassName="px-2 py-2 sm:px-4">
+      <WatchlistTable items={items} />
+    </Panel>
+  )
 }

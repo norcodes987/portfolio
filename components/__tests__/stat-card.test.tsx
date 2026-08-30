@@ -9,9 +9,14 @@ describe('StatCard', () => {
     expect(screen.getByText('1.350')).toBeInTheDocument()
   })
 
-  it('renders a positive delta in green', () => {
+  it('renders an optional sub-line', () => {
+    render(<StatCard label="Net worth" value="S$56,091" sub="SGD equivalent" />)
+    expect(screen.getByText('SGD equivalent')).toBeInTheDocument()
+  })
+
+  it('renders a positive delta in emerald', () => {
     render(<StatCard label="P&L" value="$100" deltaLabel="+5.00%" deltaPositive />)
-    expect(screen.getByText('+5.00%')).toHaveClass('text-green-600')
+    expect(screen.getByText('+5.00%')).toHaveClass('text-emerald-600')
   })
 
   it('renders a negative delta in red', () => {

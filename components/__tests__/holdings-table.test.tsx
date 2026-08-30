@@ -22,15 +22,15 @@ function holding(overrides: Partial<Holding>): Holding {
 }
 
 describe('HoldingsTable', () => {
-  it('renders a holding with a green P&L for a gain', () => {
+  it('renders a holding with a green P&L pill for a gain', () => {
     render(<HoldingsTable holdings={[holding({ unrealizedPnlPct: 5 })]} />)
     expect(screen.getByText('GOOG')).toBeInTheDocument()
-    expect(screen.getByText('+5.00%')).toHaveClass('text-green-600')
+    expect(screen.getByText('+5.00%')).toHaveClass('text-emerald-700')
   })
 
-  it('renders a red P&L for a loss', () => {
+  it('renders a red P&L pill for a loss', () => {
     render(<HoldingsTable holdings={[holding({ unrealizedPnlPct: -6.55 })]} />)
-    expect(screen.getByText('-6.55%')).toHaveClass('text-red-600')
+    expect(screen.getByText('-6.55%')).toHaveClass('text-red-700')
   })
 
   it('shows an em dash for null financial fields (watchlist rows)', () => {
@@ -42,5 +42,10 @@ describe('HoldingsTable', () => {
       />
     )
     expect(screen.getAllByText('—').length).toBeGreaterThan(0)
+  })
+
+  it('tags each row with its broker', () => {
+    render(<HoldingsTable holdings={[holding({ broker: 'MooMoo' })]} />)
+    expect(screen.getByText('MooMoo')).toBeInTheDocument()
   })
 })
