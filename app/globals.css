@@ -18,7 +18,9 @@
 }
 
 html {
-  /* keeps the fixed bottom nav clear of the iOS home indicator / Safari bar */
+  /* keep content clear of the iOS status bar (top) and home indicator (bottom)
+     when the PWA runs full-screen with viewport-fit: cover */
+  --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
