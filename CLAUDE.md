@@ -36,11 +36,35 @@ Foundation plan: `docs/superpowers/plans/2026-08-28-portfolio-foundation.md`.
   projects and their own pending changes. Never `git add -A` / `git add .`
   here — always add explicit file paths relative to `/workspace/portfolio`.
 
-## What's next
+## UI conventions
 
-The UI plan (to be written) builds the 5 nav tabs (Overview, Watchlist,
-Research, Trade Log, Performance) on top of this foundation, using a DRY
-`<DataTable>` / `<StatCard>` / `<AllocationChart>` component core (shadcn/ui
-+ Recharts). `app/page.tsx`'s minimal summary from this plan gets replaced
-by the full Overview tab; `refreshPortfolioData` and `<RefreshButton>` are
-reused as-is.
+- **Column defs live inside Client Component wrappers, not passed as props.**
+  `HoldingsTable`/`TradeLogTable`/`WatchlistTable` (`components/`) each define
+  their own `ColumnDef[]` and wrap the generic `<DataTable>`
+  (`components/data-table.tsx`). Functions (like column `cell` renderers)
+  cannot cross the Server→Client Component prop boundary, so pages only ever
+  pass plain typed arrays (`Holding[]`, etc.) into these wrappers — never
+  columns.
+- **All data-shaping is a pure function, not component logic.**
+  `lib/aggregate.ts` (sector/broker aggregation) and `lib/research.ts`
+  (earnings+outlook merge) are plain, fully unit-tested functions consumed
+  by Server Component pages. If a new chart or summary needs reshaped data,
+  add a function there first, not inline in a component.
+- **The Tabs primitive is hand-wired against `@radix-ui/react-tabs`**
+  (`components/ui/tabs.tsx`), not generated via the shadcn CLI — the CLI's
+  interactive init prompts don't work under automated execution. If more
+  shadcn-style primitives are needed later, follow the same pattern
+  (headless Radix + Tailwind classes matching shadcn's conventions) rather
+  than running `npx shadcn@latest init`.
+- **`@tanstack/react-table` is pinned to v8.** v9 is a from-scratch API
+  rewrite (`useTable`/`createCoreRowModel`/`tableFeatures` instead of
+  `useReactTable`/`getCoreRowModel`); `<DataTable>` is written against v8.
+- **`app/(dashboard)/` is a route group**, not a URL segment — `/`,
+  `/watchlist`, `/research`, `/trade-log`, `/performance` all live there and
+  share `app/(dashboard)/layout.tsx`'s nav shell. `/login` deliberately sits
+  outside the group so it never renders the nav.
+- **Dashboard pages fetch inside a `<Suspense>` boundary after `connection()`.**
+  Every page's data-fetching subcomponent calls `await connection()` before
+  the `'use cache'` fetch functions so the build never prerenders the route
+  against live-only Google credentials; the fetch results still cache
+  normally per request.
