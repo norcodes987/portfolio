@@ -17,9 +17,18 @@ export function parseNumber(cell: string | undefined): number | null {
   return Number.isNaN(value) ? null : value
 }
 
+/**
+ * A real holding/trade row always has a positive integer in its `#` column.
+ * Section headers ("MEGA-CAP"), spacer rows, and `TOTALS` / `NOTES` blocks
+ * do not — this is what keeps those out of the parsed output.
+ */
+function isNumberedRow(cell: string | undefined): boolean {
+  return /^\d+$/.test((cell ?? '').trim())
+}
+
 export function parseIbkrHoldings(rows: string[][]): Holding[] {
   return rows
-    .filter((row) => row[0]?.trim())
+    .filter((row) => isNumberedRow(row[0]))
     .map((row) => {
       const [
         ,
@@ -37,8 +46,8 @@ export function parseIbkrHoldings(rows: string[][]): Holding[] {
         targetPct,
       ] = row
       return {
-        ticker: ticker.trim(),
-        name: name.trim(),
+        ticker: (ticker ?? '').trim(),
+        name: (name ?? '').trim(),
         broker: 'IBKR',
         sector: sector?.trim() || undefined,
         status: status?.trim() === 'Held' ? 'Held' : 'Watchlist',
@@ -56,13 +65,14 @@ export function parseIbkrHoldings(rows: string[][]): Holding[] {
 
 export function parseMoomooHoldings(rows: string[][]): Holding[] {
   return rows
-    .filter((row) => row[0]?.trim())
+    .filter((row) => isNumberedRow(row[0]))
     .map((row) => {
       const [, ticker, , shares, avgCost, currency, currentPrice, marketValue, unrealizedPnl, unrealizedPnlPct] =
         row
+      const label = (ticker ?? '').trim()
       return {
-        ticker: ticker.trim(),
-        name: ticker.trim(),
+        ticker: label,
+        name: label,
         broker: 'MooMoo',
         status: 'Held',
         shares: parseNumber(shares),
@@ -79,12 +89,12 @@ export function parseMoomooHoldings(rows: string[][]): Holding[] {
 
 export function parseSgHoldings(rows: string[][]): Holding[] {
   return rows
-    .filter((row) => row[0]?.trim())
+    .filter((row) => isNumberedRow(row[0]))
     .map((row) => {
       const [, platform, product, invested, currentValue, unrealizedPnl, unrealizedPnlPct] = row
       return {
-        ticker: platform.trim(),
-        name: product.trim(),
+        ticker: (platform ?? '').trim(),
+        name: (product ?? '').trim(),
         broker: 'SG',
         status: 'Held',
         shares: null,
@@ -101,7 +111,10 @@ export function parseSgHoldings(rows: string[][]): Holding[] {
 
 export function parseWatchlist(rows: string[][]): WatchlistItem[] {
   return rows
-    .filter((row) => row[0]?.trim() && row[1]?.trim())
+    .filter((row) => {
+      const status = row[2]?.trim()
+      return Boolean(row[0]?.trim()) && Boolean(row[1]?.trim()) && (status === 'Held' || status === 'Watchlist')
+    })
     .map((row) => {
       const [ticker, company, status] = row
       return {
@@ -114,18 +127,18 @@ export function parseWatchlist(rows: string[][]): WatchlistItem[] {
 
 export function parseTradeLog(rows: string[][]): TradeLogEntry[] {
   return rows
-    .filter((row) => row[0]?.trim())
+    .filter((row) => isNumberedRow(row[0]))
     .map((row) => {
       const [, dateTime, ticker, company, side, shares, price, netAmount, orderType, commission] = row
       return {
-        date: dateTime.trim(),
-        ticker: ticker.trim(),
-        company: company.trim(),
+        date: (dateTime ?? '').trim(),
+        ticker: (ticker ?? '').trim(),
+        company: (company ?? '').trim(),
         side: side?.trim() === 'SELL' ? 'SELL' : 'BUY',
         shares: parseNumber(shares) ?? 0,
         price: parseNumber(price) ?? 0,
         netAmount: parseNumber(netAmount) ?? 0,
-        orderType: orderType.trim(),
+        orderType: (orderType ?? '').trim(),
         commission: parseNumber(commission) ?? 0,
       } satisfies TradeLogEntry
     })

@@ -251,3 +251,61 @@ describe('parseOverviewSummary', () => {
     )
   })
 })
+
+// --- Regression: real spreadsheet rows the earlier fixtures didn't cover ---
+// Captured from the live sheet on 2026-08-30. These are the exact row shapes
+// that previously crashed the parsers (`ticker.trim()` on undefined).
+
+describe('parsers ignore trailing TOTALS / NOTES / header blocks', () => {
+  it('parseIbkrHoldings skips section headers, TOTALS and NOTES rows', () => {
+    const rows = [
+      ['', 'MEGA-CAP', '', '', '', '', '', '', '', '', '', '', '30%'],
+      ['1', 'Mega-cap', 'GOOG', 'Alphabet Inc.', 'Stock', 'Held', '3', '338.00', '338.30', '1,014.90', '0.9', '0.0009', '10%'],
+      [''],
+      ['TOTALS — HELD POSITIONS'],
+      ['', '', '', '', '', '', '', 'Cost Basis', 'Mkt Value', 'Unrealised P&L', 'P&L %'],
+      ['', '', '', '', '', '', '', '14,676.45', '15,795.83', '+$1,119.39', '+7.63%'],
+      ['NOTES'],
+      ['VGT — Vanguard IT ETF placed in Tech/Software. Overlaps with MSFT & NVDA.'],
+    ]
+    const holdings = parseIbkrHoldings(rows)
+    expect(holdings.map((h) => h.ticker)).toEqual(['GOOG'])
+  })
+
+  it('parseMoomooHoldings skips the "#/TICKER/..." header row', () => {
+    const rows = [
+      ['#', 'TICKER', 'YAHOO TICKER', 'Shares', 'Avg Cost', 'Currency', 'Current Price', 'Market Value', 'Unrealised P& L', 'Unrealised P& L %'],
+      ['1', 'BOTZ', 'BOTZ', '11', '33.882', 'USD', '35.75', '393.25', '20.55', '5.51%'],
+      ['8', 'CSOP USD MM', '—', '—', '31196.93', 'USD', '—', '35177.99', '3981.06', '12.76%'],
+    ]
+    const holdings = parseMoomooHoldings(rows)
+    expect(holdings.map((h) => h.ticker)).toEqual(['BOTZ', 'CSOP USD MM'])
+    expect(holdings[1].shares).toBeNull()
+    expect(holdings[1].lastPrice).toBeNull()
+  })
+
+  it('parseSgHoldings skips the TOTALS block', () => {
+    const rows = [
+      ['1', 'FWD Insurance', 'Invest First Horizon', '4000', '5862.97', '1862.97', '46.57%'],
+      ['6', 'FSM One', 'FSM One Stocks', '2800', '3948', '1148', '41.00%'],
+      ['TOTALS — ALL POSITIONS'],
+      ['', '', '', '118390', '126809.14', '8419.14', '7.11%'],
+    ]
+    expect(parseSgHoldings(rows).map((h) => h.ticker)).toEqual(['FWD Insurance', 'FSM One'])
+  })
+
+  it('parseWatchlist (from the "Earnings" tab) skips the column header and section labels', () => {
+    const rows = [
+      ['HOLDINGS'],
+      ['TICKER', 'COMPANY', 'STATUS'],
+      ['HELD POSITIONS'],
+      ['GOOG', 'Alphabet Inc.', 'Held'],
+      ['WATCHLIST POSITIONS'],
+      ['MSFT', 'Microsoft Corp.', 'Watchlist'],
+    ]
+    expect(parseWatchlist(rows)).toEqual([
+      { ticker: 'GOOG', company: 'Alphabet Inc.', status: 'Held' },
+      { ticker: 'MSFT', company: 'Microsoft Corp.', status: 'Watchlist' },
+    ])
+  })
+})
