@@ -10,7 +10,7 @@ jest.mock('../client', () => ({
 jest.mock('next/cache', () => ({ cacheTag: jest.fn(), cacheLife: jest.fn() }))
 
 import { fetchRange } from '../client'
-import { getIbkrHoldings, getOverview } from '../fetch'
+import { getIbkrHoldings, getOverview, getWatchlist } from '../fetch'
 
 const mockedFetchRange = fetchRange as jest.MockedFunction<typeof fetchRange>
 
@@ -37,7 +37,22 @@ describe('getOverview', () => {
 
     const overview = await getOverview()
 
+    expect(mockedFetchRange).toHaveBeenCalledWith(expect.stringContaining('Overview!'))
     expect(overview.marketValueUsd).toBe(90943.05)
     expect(overview.currentValueSgd).toBe(126809.14)
+  })
+})
+
+describe('getWatchlist', () => {
+  it('reads the ticker list from the tab labelled "Earnings"', async () => {
+    mockedFetchRange.mockResolvedValueOnce([
+      ['TICKER', 'COMPANY', 'STATUS'],
+      ['GOOG', 'Alphabet Inc.', 'Held'],
+    ])
+
+    const items = await getWatchlist()
+
+    expect(mockedFetchRange).toHaveBeenCalledWith(expect.stringContaining('Earnings!'))
+    expect(items).toEqual([{ ticker: 'GOOG', company: 'Alphabet Inc.', status: 'Held' }])
   })
 })

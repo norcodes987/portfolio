@@ -17,21 +17,23 @@ bars, bottom-of-list "Performance — Soon").
 
 Google Sheet (ID `1R3ui_yx5GVo1cCTDvckdR6YBJT-vsI9LkfPyO_TqrrQ`), read via the
 Google Sheets API with a read-only service account — **never** published to
-the web. Tabs in the sheet and how they map to the app:
+the web. Tabs in the sheet (names as they appear on the live sheet, verified
+2026-08-30) and how they map to the app:
 
 | Sheet tab | Contains | App surface |
 |---|---|---|
-| Portfolio Overview | USD/SGD portfolio totals, notes | Overview summary cards |
-| IBKR Portfolio | Sector-grouped holdings, shares/cost/price/P&L, target % | Overview holdings table (IBKR sub-tab), sector donut, weight bars |
-| Moo Moo Portfolio | Holdings (ticker, shares, cost, price, P&L) | Overview holdings table (MooMoo sub-tab) |
-| SG Investments Portfolio | Platform-based holdings (insurance/robo/broker products) | Overview holdings table (SG sub-tab) |
-| Holdings (Held/Watchlist) | Ticker, company, status | Watchlist tab |
-| Quarterly Results | EPS/revenue actual vs. estimate, beat/miss, guidance | Research tab |
-| Profitability & Management Outlook | Net margin, FCF, outlook text | Research tab |
-| Trade Log | Executed trades (date, ticker, side, shares, price, commission) | Trade Log tab |
+| `Overview` | USD/SGD portfolio totals (`TOTAL USD` / `TOTAL SGD` rows), notes | Overview summary cards |
+| `IBKR Portfolio` | Sector-grouped holdings, shares/cost/price/P&L, target % | Overview holdings table (IBKR sub-tab), sector donut, weight bars |
+| `Moo Moo Portfolio` | Holdings (ticker, shares, cost, price, P&L) | Overview holdings table (MooMoo sub-tab) |
+| `SG Portfolio` | Platform-based holdings (insurance/robo/broker products) | Overview holdings table (SG sub-tab) |
+| `Earnings` | *Despite the name:* the Held/Watchlist ticker/company/status list | Watchlist tab |
+| `Trade Log` | Executed trades (date, ticker, side, shares, price, commission) | Trade Log tab |
 
-The sheet has no historical time-series data — only current snapshots. The
-"Performance" tab is a stub in v1 (see Out of scope).
+The sheet has no historical time-series data — only current snapshots — and
+**no quarterly-earnings or profitability data at all**. The originally
+planned `Quarterly Results` and `Profitability & Management Outlook` tabs do
+not exist, so the **Research** tab ships as a "Coming soon" stub alongside
+**Performance** until such a tab is added (see Out of scope).
 
 ## Access control
 
@@ -93,8 +95,9 @@ recommended ≤5 for bottom nav):
    table with sub-tabs (All/IBKR/MooMoo/SG), sector-allocation donut,
    portfolio-weight bars.
 2. **Watchlist** — table of tracked-but-not-held tickers.
-3. **Research** — per-ticker cards combining quarterly earnings and
-   profitability/outlook text.
+3. **Research** — *intended* as per-ticker cards combining quarterly earnings
+   and profitability/outlook text; ships as a disabled nav item + "Coming
+   soon" placeholder in v1 because the source sheet has no such data.
 4. **Trade Log** — chronological table of executed trades.
 5. **Performance** — disabled nav item, "Coming Soon" placeholder (no
    historical data exists yet — see Out of scope).
