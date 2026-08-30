@@ -15,11 +15,19 @@ describe('Nav', () => {
     }
   })
 
-  it('marks Performance as disabled', () => {
+  it.each(['Research', 'Performance'])('marks %s as disabled (coming-soon stub)', (label) => {
     render(<Nav />)
-    const performanceLinks = screen.getAllByText('Performance')
-    for (const link of performanceLinks) {
+    for (const link of screen.getAllByText(label)) {
       expect(link.closest('[aria-disabled="true"]')).not.toBeNull()
+    }
+  })
+
+  it('keeps the data tabs enabled', () => {
+    render(<Nav />)
+    for (const label of ['Overview', 'Watchlist', 'Trade Log']) {
+      for (const link of screen.getAllByText(label)) {
+        expect(link.closest('[aria-disabled="true"]')).toBeNull()
+      }
     }
   })
 })

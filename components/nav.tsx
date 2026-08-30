@@ -12,7 +12,7 @@ interface NavItem {
 const links: NavItem[] = [
   { href: '/', label: 'Overview' },
   { href: '/watchlist', label: 'Watchlist' },
-  { href: '/research', label: 'Research' },
+  { href: '/research', label: 'Research', disabled: true },
   { href: '/trade-log', label: 'Trade Log' },
   { href: '/performance', label: 'Performance', disabled: true },
 ]
