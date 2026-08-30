@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { connection } from 'next/server'
 import { getOverview } from '@/lib/sheets/fetch'
 import { getUsdSgdRate } from '@/lib/fx'
 import { RefreshButton } from './refresh-button'
@@ -18,6 +19,9 @@ export default function Home() {
 }
 
 async function Summary() {
+  // The dashboard is always rendered per-request (auth-gated, always-fresh);
+  // this stops the build from trying to prerender it against the live Sheet.
+  await connection()
   const [overview, fxRate] = await Promise.all([getOverview(), getUsdSgdRate()])
 
   return (
