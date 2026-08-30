@@ -114,7 +114,10 @@ export function Nav() {
       </aside>
 
       {/* Mobile bottom bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-slate-800 bg-sidebar text-slate-400">
+      <nav
+        className="fixed inset-x-0 bottom-0 z-30 flex border-t border-slate-800 bg-sidebar text-slate-400 md:hidden"
+        style={{ paddingBottom: 'var(--safe-bottom)' }}
+      >
         {allItems.map((item) => (
           <MobileLink key={item.href} {...item} active={pathname === item.href} />
         ))}
@@ -179,11 +182,11 @@ function MobileLink({
 }: NavItem & { active: boolean }) {
   const inner = (
     <>
-      <Icon className="h-5 w-5" />
-      <span className="text-[10px] font-medium">{label}</span>
+      <Icon className="h-[18px] w-[18px]" />
+      <span className="text-[10px] font-medium leading-none">{label}</span>
     </>
   )
-  const base = 'flex min-h-14 flex-1 flex-col items-center justify-center gap-1'
+  const base = 'flex min-h-[52px] flex-1 flex-col items-center justify-center gap-1 py-1.5'
 
   if (disabled) {
     return (

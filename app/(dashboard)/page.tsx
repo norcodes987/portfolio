@@ -21,8 +21,8 @@ const pct = (n: number) => `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`
 
 export default function OverviewPage() {
   return (
-    <div className="mx-auto max-w-[1400px] px-4 py-5 sm:px-6 lg:px-8">
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div className="mx-auto max-w-[1400px] px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
+      <header className="mb-4 flex items-center justify-between gap-3 sm:mb-6">
         <Suspense fallback={<span className="text-sm text-slate-400">Loading rate…</span>}>
           <RateBadge />
         </Suspense>
@@ -85,9 +85,9 @@ async function OverviewContent() {
   const brokerWeights = computeBrokerWeights(allHoldings)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Headline stats */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
         <StatCard label="Total Net Worth" value={sgd(netWorthSgd)} sub="SGD equivalent" />
         <StatCard label="USD Portfolio" value={usd(usdMarketValue)} sub={`≈ ${sgd(usdMarketValue * fxRate)}`} />
         <StatCard label="SGD Portfolio" value={sgd(sgdValue)} sub="SG accounts" />
@@ -101,22 +101,26 @@ async function OverviewContent() {
       </div>
 
       {/* Account groups */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Panel title={<GroupTitle badge="USD" label="USD Accounts" tone="sky" />} className="lg:col-span-2" bodyClassName="grid gap-4 p-5 sm:grid-cols-2">
+      <div className="grid gap-3 sm:gap-4 lg:grid-cols-3">
+        <Panel
+          title={<GroupTitle badge="USD" label="USD Accounts" tone="sky" />}
+          className="lg:col-span-2"
+          bodyClassName="grid grid-cols-2 gap-2.5 p-3 sm:gap-4 sm:p-5"
+        >
           <AccountTile name="IBKR" value={usd(ibkrSum.marketValue)} sub={`≈ ${sgd(ibkrSum.marketValue * fxRate)}`} summary={ibkrSum} />
           <AccountTile name="MooMoo" value={usd(moomooSum.marketValue)} sub={`≈ ${sgd(moomooSum.marketValue * fxRate)}`} summary={moomooSum} />
         </Panel>
-        <Panel title={<GroupTitle badge="SGD" label="SGD Accounts" tone="amber" />} bodyClassName="p-5">
+        <Panel title={<GroupTitle badge="SGD" label="SGD Accounts" tone="amber" />} bodyClassName="p-3 sm:p-5">
           <AccountTile name="SG Portfolio" value={sgd(sgSum.marketValue)} summary={sgSum} />
         </Panel>
       </div>
 
       {/* Holdings + charts */}
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid gap-4 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <Panel
           title="Holdings"
           action={`${allHoldings.length} position${allHoldings.length === 1 ? '' : 's'}`}
-          bodyClassName="px-2 pb-2 pt-3 sm:px-4"
+          bodyClassName="px-1 pb-1 pt-3 sm:px-4 sm:pb-2"
         >
           <Tabs defaultValue="all">
             <TabsList className="px-1">
@@ -140,7 +144,7 @@ async function OverviewContent() {
           </Tabs>
         </Panel>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <Panel title="Sector Allocation" action="IBKR holdings">
             <AllocationChart slices={sectorSlices} />
           </Panel>
@@ -176,11 +180,11 @@ function AccountTile({
   summary: { unrealizedPnl: number; unrealizedPnlPct: number }
 }) {
   return (
-    <div className="rounded-lg border border-slate-100 bg-slate-50/60 p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{name}</p>
-      <p className="mt-1.5 font-numeric text-2xl font-semibold text-slate-900">{value}</p>
-      {sub && <p className="mt-1 text-xs text-slate-400">{sub}</p>}
-      <div className="mt-3 flex flex-wrap gap-1.5">
+    <div className="rounded-lg border border-slate-100 bg-slate-50/60 p-3 sm:p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:text-[11px]">{name}</p>
+      <p className="mt-1 font-numeric text-lg font-semibold text-slate-900 sm:mt-1.5 sm:text-2xl">{value}</p>
+      {sub && <p className="mt-0.5 text-[11px] text-slate-400 sm:text-xs">{sub}</p>}
+      <div className="mt-2 flex flex-wrap gap-1 sm:mt-3 sm:gap-1.5">
         <PnlPill value={summary.unrealizedPnl} format="currency" />
         <PnlPill value={summary.unrealizedPnlPct} format="percent" />
       </div>
@@ -190,10 +194,10 @@ function AccountTile({
 
 function OverviewSkeleton() {
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-28 animate-pulse rounded-xl border border-slate-200 bg-white" />
+          <div key={i} className="h-24 animate-pulse rounded-xl border border-slate-200 bg-white sm:h-28" />
         ))}
       </div>
       <div className="h-40 animate-pulse rounded-xl border border-slate-200 bg-white" />

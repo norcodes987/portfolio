@@ -34,11 +34,11 @@ const columns: ColumnDef<TradeLogEntry, unknown>[] = [
       )
     },
   },
-  { accessorKey: 'shares', header: 'Shares', meta: { align: 'right' } },
+  { accessorKey: 'shares', header: 'Shares', meta: { align: 'right', mobileHidden: true } },
   {
     accessorKey: 'price',
     header: 'Price',
-    meta: { align: 'right' },
+    meta: { align: 'right', mobileHidden: true },
     cell: ({ getValue }) => `$${getValue<number>().toFixed(2)}`,
   },
   {

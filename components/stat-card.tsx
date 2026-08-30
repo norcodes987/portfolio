@@ -10,20 +10,22 @@ interface StatCardProps {
 
 export function StatCard({ label, value, sub, deltaLabel, deltaPositive, accent }: StatCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm sm:p-5">
       {accent && <span className="absolute inset-x-0 top-0 h-0.5 bg-emerald-500" />}
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:text-[11px]">
+        {label}
+      </p>
       <p
-        className={`mt-2 font-numeric text-[28px] leading-none font-semibold ${
+        className={`mt-1.5 font-numeric text-xl leading-none font-semibold sm:mt-2 sm:text-[28px] ${
           accent ? (deltaPositive ? 'text-emerald-600' : 'text-red-600') : 'text-slate-900'
         }`}
       >
         {value}
       </p>
-      {sub && <p className="mt-2 text-xs text-slate-400">{sub}</p>}
+      {sub && <p className="mt-1.5 text-[11px] text-slate-400 sm:mt-2 sm:text-xs">{sub}</p>}
       {deltaLabel && (
         <p
-          className={`mt-2 text-xs font-semibold ${
+          className={`mt-1.5 text-[11px] font-semibold sm:mt-2 sm:text-xs ${
             deltaPositive ? 'text-emerald-600' : 'text-red-600'
           }`}
         >

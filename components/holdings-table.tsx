@@ -70,19 +70,19 @@ const columns: ColumnDef<Holding, unknown>[] = [
   {
     accessorKey: 'shares',
     header: 'Shares',
-    meta: { align: 'right' },
+    meta: { align: 'right', mobileHidden: true },
     cell: ({ getValue }) => shares(getValue<number | null>()),
   },
   {
     accessorKey: 'avgCost',
     header: 'Avg Cost',
-    meta: { align: 'right' },
+    meta: { align: 'right', mobileHidden: true },
     cell: ({ getValue }) => money(getValue<number | null>()),
   },
   {
     accessorKey: 'lastPrice',
     header: 'Last Price',
-    meta: { align: 'right' },
+    meta: { align: 'right', mobileHidden: true },
     cell: ({ getValue }) => money(getValue<number | null>()),
   },
   {
@@ -96,7 +96,7 @@ const columns: ColumnDef<Holding, unknown>[] = [
   {
     accessorKey: 'unrealizedPnl',
     header: 'Unrealised P&L',
-    meta: { align: 'right' },
+    meta: { align: 'right', mobileHidden: true },
     cell: ({ getValue }) => <PnlPill value={getValue<number | null>()} format="currency" />,
   },
   {
