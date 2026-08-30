@@ -50,6 +50,18 @@ Foundation plan: `docs/superpowers/plans/2026-08-28-portfolio-foundation.md`.
 
 ## UI conventions
 
+- **Single light theme, dark sidebar** (matches `portfilio_sample_ui.png`).
+  Tokens live in `app/globals.css`: `--color-canvas` (page), `--color-sidebar`,
+  `--font-numeric` (serif for financial figures). No dark mode — the
+  `prefers-color-scheme: dark` block is deliberately a no-op. Accent colour is
+  Tailwind `emerald`; gains are `emerald`, losses are `red`, and every P&L
+  value carries a `+`/`-` sign (see `<PnlPill>`) — never colour alone.
+- **Shared shells:** `<Panel>` (card with header/action), `<StatCard>`,
+  `<PnlPill>`, `<ComingSoon>`. Reuse these rather than re-styling ad hoc.
+- **The Overview shows Held positions only.** `app/(dashboard)/page.tsx`
+  filters every broker list to `status === 'Held'` before building the tables,
+  sub-tab counts, and sector/weight aggregates. Watchlist tickers belong on the
+  Watchlist tab.
 - **Column defs live inside Client Component wrappers, not passed as props.**
   `HoldingsTable`/`TradeLogTable`/`WatchlistTable` (`components/`) each define
   their own `ColumnDef[]` and wrap the generic `<DataTable>`
