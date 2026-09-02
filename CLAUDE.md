@@ -69,6 +69,15 @@ Foundation plan: `docs/superpowers/plans/2026-08-28-portfolio-foundation.md`.
   cannot cross the Server→Client Component prop boundary, so pages only ever
   pass plain typed arrays (`Holding[]`, etc.) into these wrappers — never
   columns.
+- **`<DataTable>` sorts every column by default; opt a column out with
+  `enableSorting: false`.** Headers render a clickable sort toggle with an
+  `aria-sort` state. A wrapper can set the initial order via the
+  `defaultSorting` prop (e.g. `HoldingsTable` → Mkt Value descending;
+  `TradeLogTable` → date descending). For a nullable numeric column, map
+  `null` → `undefined` in an `accessorFn` and set `sortUndefined: 'last'` so
+  blank cells stay at the bottom in both directions — a custom `sortingFn`
+  can't, because it never sees the sort direction. `HoldingsTable`'s
+  `nullableNumberColumn` helper does this.
 - **All data-shaping is a pure function, not component logic.**
   `lib/aggregate.ts` (sector/broker aggregation) is a plain, fully
   unit-tested module consumed by Server Component pages. If a new chart or

@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { TradeLogTable } from '../trade-log-table'
 import type { TradeLogEntry } from '@/lib/sheets/types'
 
@@ -26,5 +26,41 @@ describe('TradeLogTable', () => {
   it('shows the empty message with no trades', () => {
     render(<TradeLogTable trades={[]} />)
     expect(screen.getByText('No trades yet')).toBeInTheDocument()
+  })
+
+  const dated = (ticker: string, date: string): TradeLogEntry => ({ ...trade, ticker, date })
+
+  function tickerOrder(): (string | null)[] {
+    return screen
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) => within(row).getByText(/OLD|MID|NEW/).textContent)
+  }
+
+  it('shows the most recent trade first by default', () => {
+    render(
+      <TradeLogTable
+        trades={[
+          dated('OLD', '3 Aug 2026, 10:00'),
+          dated('NEW', '9 Sep 2026, 10:00'),
+          dated('MID', '20 Aug 2026, 10:00'),
+        ]}
+      />,
+    )
+    expect(tickerOrder()).toEqual(['NEW', 'MID', 'OLD'])
+  })
+
+  it('re-sorts to oldest first when the Date header is clicked', () => {
+    render(
+      <TradeLogTable
+        trades={[
+          dated('OLD', '3 Aug 2026, 10:00'),
+          dated('NEW', '9 Sep 2026, 10:00'),
+          dated('MID', '20 Aug 2026, 10:00'),
+        ]}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /date/i }))
+    expect(tickerOrder()).toEqual(['OLD', 'MID', 'NEW'])
   })
 })

@@ -1,11 +1,22 @@
 'use client'
 
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, Row } from '@tanstack/react-table'
 import { DataTable } from './data-table'
 import type { TradeLogEntry } from '@/lib/sheets/types'
 
+/**
+ * The sheet's `date` column is a free-form timestamp string
+ * (e.g. "26 Aug 2026, 14:32"), so sort it chronologically via `Date.parse`.
+ * Unparseable values are treated as the epoch so they sink to the bottom.
+ */
+function byTradeDate(rowA: Row<TradeLogEntry>, rowB: Row<TradeLogEntry>): number {
+  const a = Date.parse(rowA.original.date) || 0
+  const b = Date.parse(rowB.original.date) || 0
+  return a - b
+}
+
 const columns: ColumnDef<TradeLogEntry, unknown>[] = [
-  { accessorKey: 'date', header: 'Date' },
+  { accessorKey: 'date', header: 'Date', sortingFn: byTradeDate, sortDescFirst: true },
   {
     accessorKey: 'ticker',
     header: 'Ticker',
@@ -54,5 +65,12 @@ const columns: ColumnDef<TradeLogEntry, unknown>[] = [
 ]
 
 export function TradeLogTable({ trades }: { trades: TradeLogEntry[] }) {
-  return <DataTable columns={columns} data={trades} emptyMessage="No trades yet" />
+  return (
+    <DataTable
+      columns={columns}
+      data={trades}
+      emptyMessage="No trades yet"
+      defaultSorting={[{ id: 'date', desc: true }]}
+    />
+  )
 }
