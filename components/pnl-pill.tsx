@@ -1,5 +1,5 @@
 interface PnlPillProps {
-  value: number | null
+  value: number | null | undefined
   format: 'currency' | 'percent'
 }
 
@@ -8,7 +8,7 @@ interface PnlPillProps {
  * unit, never colour alone (spec accessibility rule).
  */
 export function PnlPill({ value, format }: PnlPillProps) {
-  if (value === null) return <span className="text-slate-300">—</span>
+  if (value == null) return <span className="text-slate-300">—</span>
 
   const positive = value >= 0
   const magnitude = Math.abs(value)

@@ -5,14 +5,37 @@ import { DataTable } from './data-table'
 import { PnlPill } from './pnl-pill'
 import type { Holding } from '@/lib/sheets/types'
 
-function money(value: number | null): string {
-  return value === null
+function money(value: number | null | undefined): string {
+  return value == null
     ? '—'
     : `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
-function shares(value: number | null): string {
-  return value === null ? '—' : value.toLocaleString(undefined, { maximumFractionDigits: 4 })
+function shares(value: number | null | undefined): string {
+  return value == null ? '—' : value.toLocaleString(undefined, { maximumFractionDigits: 4 })
+}
+
+/**
+ * Column fragment for a nullable numeric field. Missing values render an em
+ * dash and always sort to the bottom — ascending *or* descending — because
+ * `sortUndefined: 'last'` is applied before TanStack inverts for direction
+ * (unlike a custom `sortingFn`, which can't see the sort direction). The
+ * accessor maps `null` → `undefined` so `sortUndefined` actually fires.
+ */
+function nullableNumberColumn(
+  id: keyof Holding,
+  header: string,
+  cell: ColumnDef<Holding, unknown>['cell'],
+  meta: ColumnDef<Holding, unknown>['meta'],
+): ColumnDef<Holding, unknown> {
+  return {
+    id,
+    accessorFn: (h) => h[id] ?? undefined,
+    header,
+    meta,
+    sortUndefined: 'last',
+    cell,
+  }
 }
 
 const DOT_COLORS = ['#10b981', '#0ea5e9', '#6366f1', '#a855f7', '#f59e0b', '#ef4444', '#14b8a6', '#ec4899']
@@ -67,46 +90,47 @@ const columns: ColumnDef<Holding, unknown>[] = [
       )
     },
   },
-  {
-    accessorKey: 'shares',
-    header: 'Shares',
-    meta: { align: 'right', mobileHidden: true },
-    cell: ({ getValue }) => shares(getValue<number | null>()),
-  },
-  {
-    accessorKey: 'avgCost',
-    header: 'Avg Cost',
-    meta: { align: 'right', mobileHidden: true },
-    cell: ({ getValue }) => money(getValue<number | null>()),
-  },
-  {
-    accessorKey: 'lastPrice',
-    header: 'Last Price',
-    meta: { align: 'right', mobileHidden: true },
-    cell: ({ getValue }) => money(getValue<number | null>()),
-  },
-  {
-    accessorKey: 'marketValue',
-    header: 'Mkt Value',
-    meta: { align: 'right' },
-    cell: ({ getValue }) => (
-      <span className="font-medium text-slate-900">{money(getValue<number | null>())}</span>
+  nullableNumberColumn('shares', 'Shares', ({ getValue }) => shares(getValue<number | undefined>()), {
+    align: 'right',
+    mobileHidden: true,
+  }),
+  nullableNumberColumn('avgCost', 'Avg Cost', ({ getValue }) => money(getValue<number | undefined>()), {
+    align: 'right',
+    mobileHidden: true,
+  }),
+  nullableNumberColumn('lastPrice', 'Last Price', ({ getValue }) => money(getValue<number | undefined>()), {
+    align: 'right',
+    mobileHidden: true,
+  }),
+  nullableNumberColumn(
+    'marketValue',
+    'Mkt Value',
+    ({ getValue }) => (
+      <span className="font-medium text-slate-900">{money(getValue<number | undefined>())}</span>
     ),
-  },
-  {
-    accessorKey: 'unrealizedPnl',
-    header: 'Unrealised P&L',
-    meta: { align: 'right', mobileHidden: true },
-    cell: ({ getValue }) => <PnlPill value={getValue<number | null>()} format="currency" />,
-  },
-  {
-    accessorKey: 'unrealizedPnlPct',
-    header: 'P&L %',
-    meta: { align: 'right' },
-    cell: ({ getValue }) => <PnlPill value={getValue<number | null>()} format="percent" />,
-  },
+    { align: 'right' },
+  ),
+  nullableNumberColumn(
+    'unrealizedPnl',
+    'Unrealised P&L',
+    ({ getValue }) => <PnlPill value={getValue<number | undefined>()} format="currency" />,
+    { align: 'right', mobileHidden: true },
+  ),
+  nullableNumberColumn(
+    'unrealizedPnlPct',
+    'P&L %',
+    ({ getValue }) => <PnlPill value={getValue<number | undefined>()} format="percent" />,
+    { align: 'right' },
+  ),
 ]
 
 export function HoldingsTable({ holdings }: { holdings: Holding[] }) {
-  return <DataTable columns={columns} data={holdings} emptyMessage="No holdings" />
+  return (
+    <DataTable
+      columns={columns}
+      data={holdings}
+      emptyMessage="No holdings"
+      defaultSorting={[{ id: 'marketValue', desc: true }]}
+    />
+  )
 }

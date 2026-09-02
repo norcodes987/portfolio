@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { HoldingsTable } from '../holdings-table'
 import type { Holding } from '@/lib/sheets/types'
 
@@ -47,5 +47,56 @@ describe('HoldingsTable', () => {
   it('tags each row with its broker', () => {
     render(<HoldingsTable holdings={[holding({ broker: 'MooMoo' })]} />)
     expect(screen.getByText('MooMoo')).toBeInTheDocument()
+  })
+
+  function tickerOrder(): (string | null)[] {
+    return screen
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) => within(row).getByText(/^[A-C]{3}$/).textContent)
+  }
+
+  it('defaults to market value, largest position first', () => {
+    render(
+      <HoldingsTable
+        holdings={[
+          holding({ ticker: 'AAA', marketValue: 100 }),
+          holding({ ticker: 'BBB', marketValue: 300 }),
+          holding({ ticker: 'CCC', marketValue: 200 }),
+        ]}
+      />,
+    )
+    expect(tickerOrder()).toEqual(['BBB', 'CCC', 'AAA'])
+  })
+
+  it('toggles to smallest-first when the Mkt Value header is clicked', () => {
+    render(
+      <HoldingsTable
+        holdings={[
+          holding({ ticker: 'AAA', marketValue: 100 }),
+          holding({ ticker: 'BBB', marketValue: 300 }),
+          holding({ ticker: 'CCC', marketValue: 200 }),
+        ]}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /mkt value/i }))
+    expect(tickerOrder()).toEqual(['AAA', 'CCC', 'BBB'])
+  })
+
+  it('keeps holdings with a null market value last in both directions', () => {
+    render(
+      <HoldingsTable
+        holdings={[
+          holding({ ticker: 'AAA', marketValue: null }),
+          holding({ ticker: 'BBB', marketValue: 300 }),
+          holding({ ticker: 'CCC', marketValue: 200 }),
+        ]}
+      />,
+    )
+    // default: descending, blank last
+    expect(tickerOrder()).toEqual(['BBB', 'CCC', 'AAA'])
+    // one click: ascending, blank still last
+    fireEvent.click(screen.getByRole('button', { name: /mkt value/i }))
+    expect(tickerOrder()).toEqual(['CCC', 'BBB', 'AAA'])
   })
 })
